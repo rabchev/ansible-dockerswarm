@@ -34,7 +34,7 @@
   shell: docker swarm join-token -q worker
   changed_when: False
   register: docker_worker_token
-  delegate_to: "{{ groups['{{ docker_swarm_manager_group }}'][0] }}"
+  delegate_to: "{{ groups[docker_swarm_manager_group][0] }}"
   delegate_facts: True
   when: "'{{ docker_swarm_worker_group }}' in group_names"
   tags:
@@ -44,7 +44,7 @@
   shell: docker swarm join-token -q manager
   changed_when: False
   register: docker_manager_token
-  delegate_to: "{{ groups['{{ docker_swarm_manager_group }}'][0] }}"
+  delegate_to: "{{ groups[docker_swarm_manager_group][0] }}"
   delegate_facts: True
   when: "'{{ docker_swarm_manager_group }}' in group_names
     and inventory_hostname != groups['{{ docker_swarm_manager_group }}'][0]"
@@ -54,12 +54,12 @@
 - name: Declare the address of the first Swarm manager as a fact.
   set_fact:
     docker_manager_address: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
-  when: "inventory_hostname == groups['{{ docker_swarm_manager_group }}'][0]"
+  when: "inventory_hostname == groups[docker_swarm_manager_group][0]"
 
 - name: Distribute the fact containing address of the first Swarm manager.
   set_fact:
     docker_manager_address: "{{hostvars[groups['{{ docker_swarm_manager_group }}'][0]]['docker_manager_address'] }}"
-  when: "inventory_hostname != groups['{{ docker_swarm_manager_group }}'][0]"
+  when: "inventory_hostname != groups[docker_swarm_manager_group][0]"
 
 - name: Join the pending Swarm worker nodes.
   shell: docker swarm join
@@ -95,7 +95,7 @@
          {{ ansible_hostname }}
   register: docker_swarm_labels
   changed_when: False
-  delegate_to: "{{ groups['{{ docker_swarm_manager_group }}'][0] }}"
+  delegate_to: "{{ groups[docker_swarm_manager_group][0] }}"
   delegate_facts: True
   tags:
     - skip_ansible_lint
@@ -105,7 +105,7 @@
   command: docker node update --label-rm {{ item }} {{ ansible_hostname }}
   with_items: "{{ docker_swarm_labels.stdout_lines }}"
   when: item not in swarm_labels
-  delegate_to: "{{ groups['{{ docker_swarm_manager_group }}'][0] }}"
+  delegate_to: "{{ groups[docker_swarm_manager_group][0] }}"
   delegate_facts: True
   tags:
     - skip_ansible_lint
@@ -116,7 +116,7 @@
   when: item not in docker_swarm_labels.stdout_lines
   with_items:
     - "{{ swarm_labels  | default([]) }}"
-  delegate_to: "{{ groups['{{ docker_swarm_manager_group }}'][0] }}"
+  delegate_to: "{{ groups[docker_swarm_manager_group][0] }}"
   delegate_facts: True
   tags:
     - skip_ansible_lint
