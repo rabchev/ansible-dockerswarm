@@ -32,3 +32,6 @@ skip_docker_py: False # if true, skip the docker-py
 docker_engine_group: docker_engine
 docker_swarm_manager_group: docker_swarm_manager
 docker_swarm_worker_group: docker_swarm_worker
+
+# Default docker daemon configuration
+docker_daemon_json: "{\"hosts\": [\"fd://\"]}"

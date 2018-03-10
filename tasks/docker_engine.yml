@@ -46,8 +46,19 @@
     name: docker-engine
     state: present
 
+- name: Allow dockerd daemon.json configuration.
+  lineinfile:
+    path: /lib/systemd/system/docker.service
+    regexp: "^ExecStart=/usr/bin/dockerd -H fd://"
+    line: "ExecStart=/usr/bin/dockerd"
+
+- name: Create docker daemon.json configuration.
+  copy: 
+    content: "{{ docker_daemon_json }}" 
+    dest: /etc/docker/daemon.json
+
 - name: Enable the Docker daemon as a service and start it.
   service:
     name: docker
-    state: started
+    state: reloaded
     enabled: yes

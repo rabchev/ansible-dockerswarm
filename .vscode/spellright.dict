@@ -27,3 +27,8 @@ Deamon
 pkill
 addtogroup
 selectattr
+dockerd
+fd
+usr
+tcp
+json
