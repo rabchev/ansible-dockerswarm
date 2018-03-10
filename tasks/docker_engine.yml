@@ -58,7 +58,8 @@
     dest: /etc/docker/daemon.json
 
 - name: Enable the Docker daemon as a service and start it.
-  service:
+  systemd:
     name: docker
-    state: reloaded
+    state: restarted
+    daemon_reload: yes
     enabled: yes
